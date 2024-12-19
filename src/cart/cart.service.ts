@@ -14,11 +14,29 @@ export class CartService {
   }
 
   async findByCustomerId(id: number) {
-    return this.prisma.cart.findMany({
+    const carts = await this.prisma.cart.findMany({
       where: {
         customerId: id,
       },
+      include: {
+        product: true,
+      },
     });
+
+    // Calculate total price and quantity
+    const totalPrice = carts.reduce((sum, cart) => {
+      const prodPrice = cart.product.discountPrice
+        ? cart.product.discountPrice
+        : cart.product.price;
+      return sum + prodPrice * cart.quantity;
+    }, 0);
+    const totalQuantity = carts.reduce((sum, cart) => sum + cart.quantity, 0);
+
+    return {
+      carts,
+      totalPrice,
+      totalQuantity,
+    };
   }
 
   async update(id: number, updateCartDto: UpdateCartDto) {

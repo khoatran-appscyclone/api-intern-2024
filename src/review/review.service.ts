@@ -7,8 +7,8 @@ import { ReviewQueryDto } from './dto/review-query.dto';
 export class ReviewService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createReview(dto: CreateReviewDto) {
-    const { productId, customerId, rating, comment } = dto;
+  async createReview(customerId: number, dto: CreateReviewDto) {
+    const { productId, rating, comment } = dto;
 
     // Check if the customer has purchased the product
     const hasPurchased = await this.prisma.lineOrder.findFirst({

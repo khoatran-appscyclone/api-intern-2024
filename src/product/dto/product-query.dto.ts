@@ -1,38 +1,28 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsIn, IsNumber, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  QueryParamLimitDto,
+  QueryParamPageDto,
+  QueryParamSortByDto,
+  QueryParamSortOrderDto,
+} from 'src/shared/decorators/query-dto.decorator';
+
+enum ProductSortByQueryDto {
+  Price = 'price',
+  CreatedAt = 'createdAt',
+}
 
 export class ProductQueryDto {
-  @ApiPropertyOptional({
-    description: 'Page number for pagination',
-    example: 1,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
+  @QueryParamPageDto()
   page?: number;
 
-  @ApiPropertyOptional({ description: 'Number of items per page', example: 10 })
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
+  @QueryParamLimitDto()
   limit?: number;
 
-  @ApiPropertyOptional({
-    description: 'Field to sort by (price or createdAt)',
-    example: 'price',
-  })
-  @IsOptional()
-  @IsString()
-  @IsIn(['price', 'createdAt'])
-  sortBy?: string;
+  @QueryParamSortByDto(ProductSortByQueryDto)
+  sortBy?: ProductSortByQueryDto;
 
-  @ApiPropertyOptional({
-    description: 'Sort order (asc or desc)',
-    example: 'desc',
-  })
-  @IsOptional()
-  @IsString()
-  @IsIn(['asc', 'desc'])
+  @QueryParamSortOrderDto()
   sortOrder?: string;
 
   @ApiPropertyOptional({

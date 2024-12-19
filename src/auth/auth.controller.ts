@@ -1,14 +1,13 @@
 import {
+  Body,
   Controller,
   Post,
-  Body,
   Request,
-  UseGuards,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { PrivateRouteAnyRole } from 'src/shared/decorators/private-route.decorator';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from './jwt-auth.guard';
 import { LoginDto } from './dto/auth.dto';
 
 @ApiTags('Auth')
@@ -16,8 +15,8 @@ import { LoginDto } from './dto/auth.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  @Post('login/admin')
+  async loginUser(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -25,8 +24,16 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Post('login/customer')
+  async loginCustomer(@Body() loginDto: LoginDto) {
+    const user = await this.authService.validateCustomer(loginDto);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.authService.login(user);
+  }
+
+  @PrivateRouteAnyRole()
   @Post('profile')
   getProfile(@Request() req) {
     return req.user;

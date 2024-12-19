@@ -1,6 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { PaginationDto } from 'src/shared/dto/pagination.dto';
+import { IsOptional, IsString } from 'class-validator';
+import {
+  QueryParamSortOrderDto,
+  QueryParamPageDto,
+  QueryParamLimitDto,
+  QueryParamSortByDto,
+} from 'src/shared/decorators/query-dto.decorator';
 
 export enum SortOrderByQuery {
   TotalPrice = 'totalPrice',
@@ -8,31 +13,18 @@ export enum SortOrderByQuery {
   Quantity = 'quantity',
 }
 
-export enum SortOrder {
-  Asc = 'asc',
-  Desc = 'desc',
-}
+export class OrderQueryDto {
+  @QueryParamPageDto()
+  page?: number;
 
-export class OrderQueryDto extends PaginationDto {
-  @ApiPropertyOptional({
-    description: 'Field to sort by (totalPrice, createdAt, quantity)',
-    example: 'createdAt',
-    enum: SortOrderByQuery,
-  })
-  @IsOptional()
-  @IsString()
-  @IsEnum(SortOrderByQuery)
+  @QueryParamLimitDto()
+  limit?: number;
+
+  @QueryParamSortByDto(SortOrderByQuery)
   sortBy?: SortOrderByQuery;
 
-  @ApiPropertyOptional({
-    description: 'Sort order (asc or desc)',
-    example: 'desc',
-    enum: SortOrder,
-  })
-  @IsOptional()
-  @IsString()
-  @IsEnum(SortOrder)
-  sortOrder?: SortOrder;
+  @QueryParamSortOrderDto()
+  sortOrder?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by exact customer name',

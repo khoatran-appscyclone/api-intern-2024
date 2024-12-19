@@ -10,10 +10,6 @@ import {
 } from 'class-validator';
 
 export class CreateDiscountCodeDto {
-  @ApiProperty({ description: 'Unique discount code', example: 'SUMMER2024' })
-  @IsString()
-  code: string;
-
   @ApiPropertyOptional({
     description: 'Description of the discount',
     example: 'Summer sale 20% off',
@@ -36,17 +32,9 @@ export class CreateDiscountCodeDto {
     example: 0.2,
   })
   @IsNumber()
-  @Min(1)
+  @Min(0)
   @Max(100)
   discountRate: number;
-
-  @ApiPropertyOptional({
-    description: 'Whether the discount is active',
-    example: true,
-  })
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
 
   @ApiProperty({
     description: 'List of product IDs this discount code applies to',

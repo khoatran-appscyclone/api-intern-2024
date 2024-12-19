@@ -13,6 +13,11 @@ import { CartModule } from './cart/cart.module';
 import { DiscountCodeModule } from './discount-code/discount-code.module';
 import { ReviewModule } from './review/review.module';
 import { ProductImageModule } from './product-image/product-image.module';
+import { UploadModule } from './upload/upload.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { DiscountModule } from './discount/discount.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -28,8 +33,21 @@ import { ProductImageModule } from './product-image/product-image.module';
     DiscountCodeModule,
     ReviewModule,
     ProductImageModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '../images'), // Path to the 'images' folder
+      serveRoot: '/images', // Files will be accessible via '/images'
+    }),
+    UploadModule,
+    ScheduleModule.forRoot(),
+    DiscountModule,
+    AppModule,
   ],
   controllers: [],
-  providers: [AppService, PrismaService],
+  providers: [
+    AppService,
+    PrismaService,
+    // { provide: APP_GUARD, useClass: JwtAuthGuard }, // JWT Authentication
+    // { provide: APP_GUARD, useClass: RolesGuard }, // Roles-based Access Control
+  ],
 })
 export class AppModule {}

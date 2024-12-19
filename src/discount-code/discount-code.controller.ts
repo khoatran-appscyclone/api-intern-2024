@@ -13,7 +13,7 @@ import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
 import { UpdateDiscountCodeDto } from './dto/update-discount-code.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { DiscountCodeQueryDto } from './dto/discount-code-query.dto';
-import { PrivateRouteUser } from 'src/shared/decorators/private-route.decorator';
+import { PrivateRouteAdmin } from 'src/shared/decorators/private-route.decorator';
 
 @ApiTags('Discount Codes')
 @Controller('discount-codes')
@@ -26,7 +26,7 @@ export class DiscountCodeController {
     status: 201,
     description: 'Discount code successfully created.',
   })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async create(@Body() createDiscountCodeDto: CreateDiscountCodeDto) {
     return this.discountCodeService.create(createDiscountCodeDto);
   }
@@ -40,7 +40,7 @@ export class DiscountCodeController {
     status: 200,
     description: 'List of discount codes with applied filters.',
   })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async findAll(@Query() query: DiscountCodeQueryDto) {
     return this.discountCodeService.findAll(query);
   }
@@ -49,9 +49,17 @@ export class DiscountCodeController {
   @ApiOperation({ summary: 'Get a discount code by ID' })
   @ApiResponse({ status: 200, description: 'Discount code details.' })
   @ApiResponse({ status: 404, description: 'Discount code not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async findOne(@Param('id') id: string) {
     return this.discountCodeService.findOne(+id);
+  }
+
+  @Get('code/:code')
+  @ApiOperation({ summary: 'Get a discount code by code' })
+  @ApiResponse({ status: 200, description: 'Discount code details.' })
+  @ApiResponse({ status: 404, description: 'Discount code not found.' })
+  async findOneByCode(@Param('code') code: string) {
+    return this.discountCodeService.findOneByCode(code);
   }
 
   @Patch(':id')
@@ -61,7 +69,7 @@ export class DiscountCodeController {
     description: 'Discount code successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Discount code not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async update(
     @Param('id') id: string,
     @Body() updateDiscountCodeDto: UpdateDiscountCodeDto,
@@ -76,7 +84,7 @@ export class DiscountCodeController {
     description: 'Discount code successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Discount code not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async remove(@Param('id') id: string) {
     return this.discountCodeService.remove(+id);
   }

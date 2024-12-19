@@ -2,9 +2,12 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
+import { PrivateRouteCustomer } from 'src/shared/decorators/private-route.decorator';
+import { GetUserFromReq } from 'src/shared/decorators/get-user-from-req';
 
 @ApiTags('Carts')
 @Controller('carts')
+@PrivateRouteCustomer()
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
@@ -15,12 +18,12 @@ export class CartController {
     return this.cartService.create(createCartDto);
   }
 
-  @Get(':customerId')
+  @Get('')
   @ApiOperation({ summary: 'Get a cart by customerId' })
   @ApiResponse({ status: 200, description: 'Cart details.' })
   @ApiResponse({ status: 404, description: 'Cart not found.' })
-  async findOne(@Param('customerId') customerId: string) {
-    return this.cartService.findByCustomerId(+customerId);
+  async findOne(@GetUserFromReq('id') id: string) {
+    return this.cartService.findByCustomerId(+id);
   }
 
   @Delete(':id')

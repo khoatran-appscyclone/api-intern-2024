@@ -28,15 +28,6 @@ export class CreateProductDto {
   price: number;
 
   @ApiProperty({
-    description: 'The discounted price of the product',
-    example: 1099.99,
-    required: false,
-  })
-  @IsNumber()
-  @IsOptional()
-  discountPrice?: number;
-
-  @ApiProperty({
     description: 'The thumbnail URL of the product',
     example: 'http://example.com/thumbnail.jpg',
     required: false,

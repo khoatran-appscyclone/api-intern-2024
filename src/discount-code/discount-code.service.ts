@@ -14,8 +14,11 @@ export class DiscountCodeService {
     return this.prisma.discountCode.create({
       data: {
         ...data,
+        code: this.code(),
         productDiscountCodes: {
-          connect: productIds.map((id) => ({ id })),
+          createMany: {
+            data: productIds.map((productId) => ({ productId })),
+          },
         },
       },
     });
@@ -74,6 +77,25 @@ export class DiscountCodeService {
     return discountCode;
   }
 
+  async findOneByCode(code: string) {
+    const discountCode = await this.prisma.discountCode.findUnique({
+      where: { code },
+      include: {
+        productDiscountCodes: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!discountCode) {
+      throw new NotFoundException('Discount code not found.');
+    }
+
+    return discountCode;
+  }
+
   async update(id: number, updateDiscountCodeDto: UpdateDiscountCodeDto) {
     const { productIds, ...data } = updateDiscountCodeDto;
 
@@ -92,5 +114,18 @@ export class DiscountCodeService {
     return this.prisma.discountCode.delete({
       where: { id },
     });
+  }
+
+  code() {
+    let result = '';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < 10) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
   }
 }

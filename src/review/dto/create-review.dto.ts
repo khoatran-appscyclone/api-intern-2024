@@ -19,8 +19,4 @@ export class CreateReviewDto {
   @ApiProperty({ description: 'Product ID being reviewed', example: 1 })
   @IsInt()
   productId: number;
-
-  @ApiProperty({ description: 'Customer ID submitting the review', example: 1 })
-  @IsInt()
-  customerId: number;
 }

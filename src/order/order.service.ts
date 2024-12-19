@@ -6,6 +6,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderQueryDto } from './dto/order-query.dto';
+import { Cart, Product } from '@prisma/client';
+import { CartService } from 'src/cart/cart.service';
 
 @Injectable()
 export class OrderService {
@@ -92,8 +94,17 @@ export class OrderService {
     }
 
     // Calculate total price and quantity
-    const totalPrice = carts.reduce((sum, cart) => sum + cart.price, 0);
+    const totalPrice = carts.reduce((sum, cart) => {
+      return sum + this.getProductPriceInCart(cart) * cart.quantity;
+    }, 0);
     const totalQuantity = carts.reduce((sum, cart) => sum + cart.quantity, 0);
+
+    // Create line orders for each cart item
+    const lineOrders = carts.map((cart) => ({
+      quantity: cart.quantity,
+      price: this.getProductPriceInCart(cart) * cart.quantity,
+      productId: cart.productId,
+    }));
 
     // Create the order
     const order = await this.prisma.order.create({
@@ -101,21 +112,15 @@ export class OrderService {
         customerId,
         totalPrice,
         quantity: totalQuantity,
-        createdAt: new Date(),
+        lineOrder: {
+          createMany: {
+            data: lineOrders,
+          },
+        },
       },
-    });
-
-    // Create line orders for each cart item
-    const lineOrders = carts.map((cart) => ({
-      quantity: cart.quantity,
-      price: cart.price,
-      productId: cart.productId,
-      orderId: order.id,
-      createdAt: new Date(),
-    }));
-
-    await this.prisma.lineOrder.createMany({
-      data: lineOrders,
+      include: {
+        lineOrder: true,
+      },
     });
 
     // Clear the customer's cart
@@ -123,11 +128,7 @@ export class OrderService {
       where: { customerId },
     });
 
-    return {
-      message: 'Order created successfully!',
-      order,
-      lineOrders,
-    };
+    return order;
   }
 
   async createOrderFromCartWithDiscount(
@@ -173,7 +174,7 @@ export class OrderService {
 
     // Validate that the total cart amount meets the minimum requirement
     const totalCartAmount = eligibleCarts.reduce(
-      (sum, cart) => sum + cart.price * cart.quantity,
+      (sum, cart) => sum + this.getProductPriceInCart(cart) * cart.quantity,
       0,
     );
     if (totalCartAmount < discount.minAmount) {
@@ -190,6 +191,13 @@ export class OrderService {
       0,
     );
 
+    // Create line orders for eligible cart items
+    const lineOrders = eligibleCarts.map((cart) => ({
+      quantity: cart.quantity,
+      price: this.getProductPriceInCart(cart) * cart.quantity,
+      productId: cart.productId,
+    }));
+
     // Create the order
     const order = await this.prisma.order.create({
       data: {
@@ -197,21 +205,12 @@ export class OrderService {
         totalPrice: totalPriceAfterDiscount,
         quantity: totalQuantity,
         discountCodeId: discount.id,
-        createdAt: new Date(),
+        lineOrder: {
+          createMany: {
+            data: lineOrders,
+          },
+        },
       },
-    });
-
-    // Create line orders for eligible cart items
-    const lineOrders = eligibleCarts.map((cart) => ({
-      quantity: cart.quantity,
-      price: cart.price,
-      productId: cart.productId,
-      orderId: order.id,
-      createdAt: new Date(),
-    }));
-
-    await this.prisma.lineOrder.createMany({
-      data: lineOrders,
     });
 
     // Clear the customer's cart
@@ -243,5 +242,11 @@ export class OrderService {
         totalPriceAfterDiscount,
       },
     };
+  }
+
+  getProductPriceInCart(cart: Cart & { product: Product }) {
+    return cart.product.discountPrice
+      ? cart.product.discountPrice
+      : cart.product.price;
   }
 }

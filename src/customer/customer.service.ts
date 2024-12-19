@@ -29,4 +29,8 @@ export class CustomerService {
   async remove(id: number) {
     return this.prisma.customer.delete({ where: { id } });
   }
+
+  async findByUsername(username: string) {
+    return this.prisma.customer.findUnique({ where: { username } });
+  }
 }

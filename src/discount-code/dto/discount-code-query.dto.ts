@@ -1,12 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsBoolean } from 'class-validator';
 import {
-  IsOptional,
-  IsString,
-  IsBoolean,
-  IsInt,
-  IsEnum,
-  Min,
-} from 'class-validator';
+  QueryParamPageDto,
+  QueryParamLimitDto,
+  QueryParamSortByDto,
+  QueryParamSortOrderDto,
+} from 'src/shared/decorators/query-dto.decorator';
 
 export enum DiscountCodeSortBy {
   CREATED_AT = 'createdAt',
@@ -14,20 +13,17 @@ export enum DiscountCodeSortBy {
 }
 
 export class DiscountCodeQueryDto {
-  @ApiPropertyOptional({
-    description: 'Page number for pagination',
-    example: 1,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
+  @QueryParamPageDto()
   page?: number;
 
-  @ApiPropertyOptional({ description: 'Number of items per page', example: 10 })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
+  @QueryParamLimitDto()
   limit?: number;
+
+  @QueryParamSortByDto(DiscountCodeSortBy)
+  sortBy?: DiscountCodeSortBy;
+
+  @QueryParamSortOrderDto()
+  sortOrder?: string;
 
   @ApiPropertyOptional({
     description: 'Search discount codes by code',
@@ -44,22 +40,4 @@ export class DiscountCodeQueryDto {
   @IsOptional()
   @IsBoolean()
   active?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'Sort by field (createdAt or minAmount)',
-    example: 'createdAt',
-    enum: DiscountCodeSortBy,
-  })
-  @IsOptional()
-  @IsEnum(DiscountCodeSortBy)
-  sortBy?: DiscountCodeSortBy;
-
-  @ApiPropertyOptional({
-    description: 'Sort order (asc or desc)',
-    example: 'desc',
-    enum: ['asc', 'desc'],
-  })
-  @IsOptional()
-  @IsString()
-  sortOrder?: 'asc' | 'desc';
 }

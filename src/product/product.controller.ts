@@ -1,19 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
   Patch,
-  Delete,
+  Post,
   Query,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PrivateRouteAdmin } from 'src/shared/decorators/private-route.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { ProductQueryDto } from './dto/product-query.dto';
-import { PrivateRouteUser } from 'src/shared/decorators/private-route.decorator';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductService } from './product.service';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { Role } from 'src/shared/enum/roles.enum';
 
 @ApiTags('Products')
 @Controller('products')
@@ -23,7 +25,8 @@ export class ProductController {
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'Product successfully created.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
+  @Roles(Role.ADMIN)
   async create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
@@ -52,7 +55,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Update a product' })
   @ApiResponse({ status: 200, description: 'Product successfully updated.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
@@ -64,7 +67,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Delete a product' })
   @ApiResponse({ status: 200, description: 'Product successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async remove(@Param('id') id: string) {
     return this.productService.remove(+id);
   }

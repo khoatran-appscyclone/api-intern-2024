@@ -1,19 +1,12 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  Patch,
-  Delete,
-  Get,
-} from '@nestjs/common';
-import { ProductImageService } from './product-image.service';
+import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PrivateRouteAdmin } from 'src/shared/decorators/private-route.decorator';
 import { CreateProductImageDto } from './dto/create-product-image.dto';
-import { UpdateProductImageDto } from './dto/update-product-image.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ProductImageService } from './product-image.service';
 
 @ApiTags('Product Images')
 @Controller('product-images')
+@PrivateRouteAdmin()
 export class ProductImageController {
   constructor(private readonly productImageService: ProductImageService) {}
 
@@ -24,19 +17,6 @@ export class ProductImageController {
     return this.productImageService.addImage(createImageDto);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update an existing product image' })
-  @ApiResponse({
-    status: 200,
-    description: 'Product image updated successfully',
-  })
-  async updateImage(
-    @Param('id') id: string,
-    @Body() updateImageDto: UpdateProductImageDto,
-  ) {
-    return this.productImageService.updateImage(+id, updateImageDto);
-  }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product image' })
   @ApiResponse({
@@ -45,12 +25,5 @@ export class ProductImageController {
   })
   async deleteImage(@Param('id') id: string) {
     return this.productImageService.deleteImage(+id);
-  }
-
-  @Get('product/:productId')
-  @ApiOperation({ summary: 'Get all images for a product' })
-  @ApiResponse({ status: 200, description: 'List of product images' })
-  async getImages(@Param('productId') productId: string) {
-    return this.productImageService.getImagesByProduct(+productId);
   }
 }

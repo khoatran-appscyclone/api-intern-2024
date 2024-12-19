@@ -9,7 +9,7 @@ export class ProductImageService {
 
   // Add a new image to a product
   async addImage(createImageDto: CreateProductImageDto) {
-    const { productId, url } = createImageDto;
+    const { productId, urls } = createImageDto;
 
     // Check if the product exists
     const product = await this.prisma.product.findUnique({
@@ -18,13 +18,26 @@ export class ProductImageService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
+    const jobs = [];
+    for (const url of urls) {
+      const job = this.prisma.productImage.upsert({
+        where: {
+          product_url_unique: {
+            url,
+            productId,
+          },
+        },
+        update: {},
+        create: {
+          url,
+          productId,
+        },
+      });
 
-    return this.prisma.productImage.create({
-      data: {
-        url,
-        productId,
-      },
-    });
+      jobs.push(job);
+    }
+
+    return Promise.all(jobs);
   }
 
   // Update an existing product image

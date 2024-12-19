@@ -11,7 +11,7 @@ import { VendorService } from './vendor.service';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { PrivateRouteUser } from 'src/shared/decorators/private-route.decorator';
+import { PrivateRouteAdmin } from 'src/shared/decorators/private-route.decorator';
 
 @ApiTags('Vendors')
 @Controller('vendors')
@@ -21,7 +21,7 @@ export class VendorController {
   @Post()
   @ApiOperation({ summary: 'Create a new vendor' })
   @ApiResponse({ status: 201, description: 'Vendor successfully created.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async create(@Body() createVendorDto: CreateVendorDto) {
     return this.vendorService.create(createVendorDto);
   }
@@ -45,7 +45,7 @@ export class VendorController {
   @ApiOperation({ summary: 'Update a vendor' })
   @ApiResponse({ status: 200, description: 'Vendor successfully updated.' })
   @ApiResponse({ status: 404, description: 'Vendor not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async update(
     @Param('id') id: string,
     @Body() updateVendorDto: UpdateVendorDto,
@@ -57,7 +57,7 @@ export class VendorController {
   @ApiOperation({ summary: 'Delete a vendor' })
   @ApiResponse({ status: 200, description: 'Vendor successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Vendor not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async remove(@Param('id') id: string) {
     return this.vendorService.remove(+id);
   }

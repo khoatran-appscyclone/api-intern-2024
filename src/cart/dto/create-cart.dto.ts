@@ -20,7 +20,7 @@ export class CreateCartDto {
   @IsPositive()
   quantity: number;
 
-  @ApiProperty({ description: 'Total price of the cart', example: 150.75 })
-  @IsPositive()
-  price: number;
+  // @ApiProperty({ description: 'Total price of the cart', example: 150.75 })
+  // @IsPositive()
+  // price: number;
 }

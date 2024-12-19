@@ -11,7 +11,7 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { PrivateRouteUser } from 'src/shared/decorators/private-route.decorator';
+import { PrivateRouteAdmin } from 'src/shared/decorators/private-route.decorator';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -21,7 +21,7 @@ export class CategoryController {
   @Post()
   @ApiOperation({ summary: 'Create a new category' })
   @ApiResponse({ status: 201, description: 'Category successfully created.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
   }
@@ -45,7 +45,7 @@ export class CategoryController {
   @ApiOperation({ summary: 'Update a category' })
   @ApiResponse({ status: 200, description: 'Category successfully updated.' })
   @ApiResponse({ status: 404, description: 'Category not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -57,7 +57,7 @@ export class CategoryController {
   @ApiOperation({ summary: 'Delete a category' })
   @ApiResponse({ status: 200, description: 'Category successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Category not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async remove(@Param('id') id: string) {
     return this.categoryService.remove(+id);
   }

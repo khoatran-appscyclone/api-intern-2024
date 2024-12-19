@@ -59,7 +59,14 @@ export class ProductService {
   async findOne(id: number) {
     return this.prisma.product.findUnique({
       where: { id },
-      include: { productImage: true },
+      include: {
+        productImage: {
+          select: {
+            id: true,
+            url: true,
+          },
+        },
+      },
     });
   }
 

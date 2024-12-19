@@ -11,7 +11,11 @@ import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { PrivateRouteUser } from 'src/shared/decorators/private-route.decorator';
+import {
+  PrivateRouteAnyRole,
+  PrivateRouteCustomer,
+  PrivateRouteAdmin,
+} from 'src/shared/decorators/private-route.decorator';
 
 @ApiTags('Customers')
 @Controller('customers')
@@ -28,7 +32,7 @@ export class CustomerController {
   @Get()
   @ApiOperation({ summary: 'Get all customers' })
   @ApiResponse({ status: 200, description: 'List of all customers.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async findAll() {
     return this.customerService.findAll();
   }
@@ -37,6 +41,7 @@ export class CustomerController {
   @ApiOperation({ summary: 'Get a customer by ID' })
   @ApiResponse({ status: 200, description: 'Customer details.' })
   @ApiResponse({ status: 404, description: 'Customer not found.' })
+  @PrivateRouteAnyRole()
   async findOne(@Param('id') id: string) {
     return this.customerService.findOne(+id);
   }
@@ -45,6 +50,7 @@ export class CustomerController {
   @ApiOperation({ summary: 'Update a customer' })
   @ApiResponse({ status: 200, description: 'Customer successfully updated.' })
   @ApiResponse({ status: 404, description: 'Customer not found.' })
+  @PrivateRouteCustomer()
   async update(
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
@@ -56,7 +62,7 @@ export class CustomerController {
   @ApiOperation({ summary: 'Delete a customer' })
   @ApiResponse({ status: 200, description: 'Customer successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Customer not found.' })
-  @PrivateRouteUser()
+  @PrivateRouteAdmin()
   async remove(@Param('id') id: string) {
     return this.customerService.remove(+id);
   }

@@ -3,6 +3,8 @@ import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ReviewQueryDto } from './dto/review-query.dto';
+import { PrivateRouteCustomer } from 'src/shared/decorators/private-route.decorator';
+import { GetUserFromReq } from 'src/shared/decorators/get-user-from-req';
 
 @ApiTags('Reviews')
 @Controller('reviews')
@@ -16,8 +18,12 @@ export class ReviewController {
     status: 400,
     description: 'Validation failed or duplicate review.',
   })
-  async createReview(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.createReview(createReviewDto);
+  @PrivateRouteCustomer()
+  async createReview(
+    @Body() createReviewDto: CreateReviewDto,
+    @GetUserFromReq('id') customerId: number,
+  ) {
+    return this.reviewService.createReview(customerId, createReviewDto);
   }
 
   @Get('product/:productId')
@@ -39,6 +45,7 @@ export class ReviewController {
   @Get('customer')
   @ApiOperation({ summary: 'Get all reviews submitted by a customer' })
   @ApiResponse({ status: 200, description: 'List of reviews by the customer.' })
+  @PrivateRouteCustomer()
   async getReviewsByCustomer(@Query('customerId') customerId: number) {
     return this.reviewService.findReviewsByCustomer(+customerId);
   }
