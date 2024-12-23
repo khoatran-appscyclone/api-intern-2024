@@ -1,4 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import {
   QueryParamLimitDto,
@@ -36,10 +37,12 @@ export class ProductQueryDto {
   @ApiPropertyOptional({ description: 'Filter by vendor ID', example: 1 })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   vendorId?: number;
 
   @ApiPropertyOptional({ description: 'Filter by category ID', example: 2 })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   categoryId?: number;
 }

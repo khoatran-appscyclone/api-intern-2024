@@ -28,7 +28,7 @@ export class ProductService {
     // Build the filtering conditions dynamically
     const filters: any = {};
     if (name) {
-      filters.name = { contains: name, mode: 'insensitive' }; // Case-insensitive search
+      filters.name = { contains: name }; // Case-insensitive search
     }
     if (vendorId) {
       filters.vendorId = +vendorId;
