@@ -12,7 +12,7 @@ export class CreateVendorDto {
     example: 'http://example.com/thumbnail.jpg',
     required: false,
   })
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @IsOptional()
   thumbnail?: string;
 }

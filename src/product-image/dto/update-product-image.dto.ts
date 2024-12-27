@@ -8,6 +8,6 @@ export class UpdateProductImageDto {
   })
   @IsOptional()
   @IsString()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   url?: string;
 }
