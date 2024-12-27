@@ -48,7 +48,7 @@ export class DiscountCodeService {
     // Fetch data with Prisma
     const [discountCodes, total] = await Promise.all([
       this.prisma.discountCode.findMany({
-        where: filters,
+        where: { ...filters, isActive: true },
         orderBy: { [sortBy]: sortOrder },
         skip,
         take: limit,
@@ -79,7 +79,7 @@ export class DiscountCodeService {
 
   async findOneByCode(code: string) {
     const discountCode = await this.prisma.discountCode.findUnique({
-      where: { code },
+      where: { code, isActive: true },
       include: {
         productDiscountCodes: {
           include: {
@@ -111,8 +111,11 @@ export class DiscountCodeService {
   }
 
   async remove(id: number) {
-    return this.prisma.discountCode.delete({
+    return this.prisma.discountCode.update({
       where: { id },
+      data: {
+        isActive: false,
+      },
     });
   }
 
