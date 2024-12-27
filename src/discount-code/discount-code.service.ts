@@ -67,7 +67,13 @@ export class DiscountCodeService {
   async findOne(id: number) {
     const discountCode = await this.prisma.discountCode.findUnique({
       where: { id },
-      include: { productDiscountCodes: true },
+      include: {
+        productDiscountCodes: {
+          include: {
+            product: true,
+          },
+        },
+      },
     });
 
     if (!discountCode) {
