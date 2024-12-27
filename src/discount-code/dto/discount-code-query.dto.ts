@@ -1,4 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsOptional, IsString, IsBoolean } from 'class-validator';
 import {
   QueryParamPageDto,
@@ -37,6 +38,7 @@ export class DiscountCodeQueryDto {
     description: 'Filter by active status',
     example: true,
   })
+  @Type(() => Boolean)
   @IsOptional()
   @IsBoolean()
   active?: boolean;

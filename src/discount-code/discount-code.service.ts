@@ -39,7 +39,7 @@ export class DiscountCodeService {
     // Build filters dynamically
     const filters: any = {};
     if (code) {
-      filters.code = { contains: code, mode: 'insensitive' }; // Case-insensitive search
+      filters.code = { contains: code }; // Case-insensitive search
     }
     if (active !== undefined) {
       filters.isActive = active;
