@@ -12,7 +12,7 @@ export class VendorService {
   }
 
   async findAll() {
-    return this.prisma.vendor.findMany();
+    return this.prisma.vendor.findMany({ where: { active: true } });
   }
 
   async findOne(id: number) {
@@ -27,6 +27,9 @@ export class VendorService {
   }
 
   async remove(id: number) {
-    return this.prisma.vendor.delete({ where: { id } });
+    return this.prisma.vendor.update({
+      where: { id },
+      data: { active: false },
+    });
   }
 }

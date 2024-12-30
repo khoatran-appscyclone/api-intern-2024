@@ -12,7 +12,7 @@ export class CategoryService {
   }
 
   async findAll() {
-    return this.prisma.category.findMany();
+    return this.prisma.category.findMany({ where: { active: true } });
   }
 
   async findOne(id: number) {
@@ -27,6 +27,9 @@ export class CategoryService {
   }
 
   async remove(id: number) {
-    return this.prisma.category.delete({ where: { id } });
+    return this.prisma.category.update({
+      where: { id },
+      data: { active: false },
+    });
   }
 }

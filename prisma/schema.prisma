@@ -30,6 +30,7 @@ model Vendor {
   thumbnail String?
   createdAt DateTime  @default(now())
   Product   Product[]
+  active    Boolean   @default(true)
 }
 
 model Category {
@@ -38,6 +39,7 @@ model Category {
   thumbnail String?
   createdAt DateTime  @default(now())
   Product   Product[]
+  active    Boolean   @default(true)
 }
 
 model Product {
