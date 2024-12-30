@@ -69,9 +69,7 @@ export class DiscountCodeService {
       where: { id },
       include: {
         productDiscountCodes: {
-          include: {
-            product: true,
-          },
+          select: { product: true },
         },
       },
     });
@@ -103,16 +101,32 @@ export class DiscountCodeService {
   }
 
   async update(id: number, updateDiscountCodeDto: UpdateDiscountCodeDto) {
-    const { productIds, ...data } = updateDiscountCodeDto;
+    const { ...data } = updateDiscountCodeDto;
 
-    return this.prisma.discountCode.update({
+    return await this.prisma.discountCode.update({
       where: { id },
       data: {
         ...data,
-        productDiscountCodes: {
-          set: productIds.map((id) => ({ id })),
-        },
       },
+    });
+  }
+
+  async removeProducts(discountCodeId: number, productIds: number[]) {
+    return this.prisma.productDiscountCodes.deleteMany({
+      where: {
+        discountCodeId,
+        productId: { in: productIds },
+      },
+    });
+  }
+
+  async addProducts(discountCodeId: number, productIds: number[]) {
+    return this.prisma.productDiscountCodes.createMany({
+      data: productIds.map((productId) => ({
+        discountCodeId,
+        productId,
+      })),
+      skipDuplicates: true,
     });
   }
 

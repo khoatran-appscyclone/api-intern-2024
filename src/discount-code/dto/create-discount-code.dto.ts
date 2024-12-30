@@ -6,7 +6,7 @@ import {
   IsArray,
   Min,
   Max,
-  IsBoolean,
+  ArrayMinSize,
 } from 'class-validator';
 
 export class CreateDiscountCodeDto {
@@ -41,6 +41,7 @@ export class CreateDiscountCodeDto {
     example: [1, 2, 3],
   })
   @IsArray()
+  @ArrayMinSize(1)
   @IsNumber({}, { each: true })
   productIds: number[];
 

@@ -10,7 +10,10 @@ import {
 } from '@nestjs/common';
 import { DiscountCodeService } from './discount-code.service';
 import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
-import { UpdateDiscountCodeDto } from './dto/update-discount-code.dto';
+import {
+  UpdateDiscountCodeDto,
+  UpdateProductDiscountCodeDto,
+} from './dto/update-discount-code.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { DiscountCodeQueryDto } from './dto/discount-code-query.dto';
 import { PrivateRouteAdmin } from 'src/shared/decorators/private-route.decorator';
@@ -87,5 +90,39 @@ export class DiscountCodeController {
   @PrivateRouteAdmin()
   async remove(@Param('id') id: string) {
     return this.discountCodeService.remove(+id);
+  }
+
+  @Post('/add-products/:id')
+  @ApiOperation({ summary: 'Add product to discount code' })
+  @ApiResponse({
+    status: 201,
+    description: 'Discount code successfully created.',
+  })
+  @PrivateRouteAdmin()
+  async addProducts(
+    @Body() updateProductDiscountCodeDto: UpdateProductDiscountCodeDto,
+    @Param('id') id: string,
+  ) {
+    return this.discountCodeService.addProducts(
+      +id,
+      updateProductDiscountCodeDto.productIds,
+    );
+  }
+
+  @Delete('/remove-products/:id')
+  @ApiOperation({ summary: 'Add product to discount code' })
+  @ApiResponse({
+    status: 201,
+    description: 'Discount code successfully created.',
+  })
+  @PrivateRouteAdmin()
+  async removeProducts(
+    @Body() updateProductDiscountCodeDto: UpdateProductDiscountCodeDto,
+    @Param('id') id: string,
+  ) {
+    return this.discountCodeService.removeProducts(
+      +id,
+      updateProductDiscountCodeDto.productIds,
+    );
   }
 }

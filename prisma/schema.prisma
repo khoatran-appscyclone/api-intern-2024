@@ -136,6 +136,8 @@ model ProductDiscountCodes {
   discountCode   DiscountCode @relation(fields: [discountCodeId], references: [id])
   productId      Int
   discountCodeId Int
+
+  @@unique([discountCodeId, productId]) // Ensure one review per customer per product
 }
 
 model Review {
