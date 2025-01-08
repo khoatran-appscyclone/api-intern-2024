@@ -138,11 +138,11 @@ export class DiscountCodeService {
       },
     });
 
-    await this.prisma.productDiscountCodes.deleteMany({
-      where: {
-        discountCodeId: discountCode.id,
-      },
-    });
+    // await this.prisma.productDiscountCodes.deleteMany({
+    //   where: {
+    //     discountCodeId: discountCode.id,
+    //   },
+    // });
 
     return discountCode;
   }
