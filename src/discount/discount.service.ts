@@ -122,7 +122,7 @@ export class DiscountService {
     if (active !== undefined) {
       filters.active = active;
     }
-    console.log(filters);
+    // console.log(filters);
     // Fetch discounts with pagination and filtering
     const [discounts, total] = await Promise.all([
       this.prisma.discount.findMany({

@@ -106,71 +106,69 @@ async function main() {
   // Seed Orders
   console.log('Seeding Orders...');
   const orders = [];
-  for (let i = 0; i < 10; i++) {
-    const orderProducts = faker.helpers.arrayElements(
-      products,
-      faker.number.int({ min: 1, max: 5 }),
-    );
+  // for (let i = 0; i < 10; i++) {
+  //   const orderProducts = faker.helpers.arrayElements(
+  //     products,
+  //     faker.number.int({ min: 1, max: 5 }),
+  //   );
 
-    let totalPrice = 0;
-    let quantity = 0;
+  //   let totalPrice = 0;
+  //   let quantity = 0;
 
-    // Create Order
-    const order = await prisma.order.create({
+  //   // Create Order
+  //   const order = await prisma.order.create({
+  //     data: {
+  //       customerId: faker.number.int({ min: 0, max: 10 }),
+  //       createdAt: faker.date.past(),
+  //       quantity: 0, // Will update later
+  //       totalPrice: 0, // Will update later
+  //     },
+  //   });
+
+  //   // Create LineOrders for the Order
+  //   for (const product of orderProducts) {
+  //     const lineOrderQuantity = faker.number.int({ min: 1, max: 5 });
+  //     const lineOrderPrice = product.price * lineOrderQuantity;
+
+  //     await prisma.lineOrder.create({
+  //       data: {
+  //         quantity: lineOrderQuantity,
+  //         price: lineOrderPrice,
+  //         createdAt: faker.date.past(),
+  //         productId: product.id,
+  //         orderId: order.id,
+  //       },
+  //     });
+
+  //     totalPrice += lineOrderPrice;
+  //     quantity += lineOrderQuantity;
+  //   }
+
+  //   // Update Order with totalPrice and quantity
+  //   orders.push(
+  //     await prisma.order.update({
+  //       where: { id: order.id },
+  //       data: { totalPrice, quantity },
+  //     }),
+  //   );
+  // }
+
+  for (let i = 0; i < 100; i++) {
+    await prisma.discountCode.create({
       data: {
-        customerId: faker.number.int({ min: 0, max: 10 }),
-        createdAt: faker.date.past(),
-        quantity: 0, // Will update later
-        totalPrice: 0, // Will update later
+        code: faker.string.nanoid(),
+        description: faker.commerce.productDescription(),
+        minAmount: faker.number.int({ min: 100, max: 10000 }),
+        discountRate: faker.number.int({ min: 1, max: 100 }) / 100,
+        numberCodeApply: faker.number.int({ min: 5, max: 20 }),
+        productDiscountCodes: {
+          createMany: {
+            data: [{ productId: 26 }],
+          },
+        },
       },
     });
-
-    // Create LineOrders for the Order
-    for (const product of orderProducts) {
-      const lineOrderQuantity = faker.number.int({ min: 1, max: 5 });
-      const lineOrderPrice = product.price * lineOrderQuantity;
-
-      await prisma.lineOrder.create({
-        data: {
-          quantity: lineOrderQuantity,
-          price: lineOrderPrice,
-          createdAt: faker.date.past(),
-          productId: product.id,
-          orderId: order.id,
-        },
-      });
-
-      totalPrice += lineOrderPrice;
-      quantity += lineOrderQuantity;
-    }
-
-    // Update Order with totalPrice and quantity
-    orders.push(
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { totalPrice, quantity },
-      }),
-    );
   }
-
-  await prisma.discountCode.create({
-    data: {
-      code: faker.string.nanoid(),
-      description: faker.commerce.productDescription(),
-      minAmount: faker.number.int({ min: 100, max: 10000 }),
-      discountRate: faker.number.int({ min: 1, max: 100 }) / 100,
-      numberCodeApply: faker.number.int({ min: 5, max: 20 }),
-      productDiscountCodes: {
-        createMany: {
-          data: [
-            { productId: faker.number.int({ min: 1, max: 100 }) },
-            { productId: faker.number.int({ min: 1, max: 100 }) },
-            { productId: faker.number.int({ min: 1, max: 100 }) },
-          ],
-        },
-      },
-    },
-  });
 
   console.log('Discount codes seeded!');
 

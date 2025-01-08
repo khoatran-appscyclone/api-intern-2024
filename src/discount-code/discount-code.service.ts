@@ -131,12 +131,20 @@ export class DiscountCodeService {
   }
 
   async remove(id: number) {
-    return this.prisma.discountCode.update({
+    const discountCode = await this.prisma.discountCode.update({
       where: { id },
       data: {
         isActive: false,
       },
     });
+
+    await this.prisma.productDiscountCodes.deleteMany({
+      where: {
+        discountCodeId: discountCode.id,
+      },
+    });
+
+    return discountCode;
   }
 
   code() {

@@ -61,6 +61,7 @@ model Product {
   Review               Review[]
   productImage         ProductImage[]
   productDiscount      ProductDiscount[]
+  active              Boolean                @default(true)
 }
 
 model Customer {

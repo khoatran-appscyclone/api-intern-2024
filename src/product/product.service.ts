@@ -37,6 +37,8 @@ export class ProductService {
       filters.categoryId = +categoryId;
     }
 
+    filters.active = true;
+
     // Fetch products with Prisma
     const [products, total] = await Promise.all([
       this.prisma.product.findMany({
@@ -58,7 +60,7 @@ export class ProductService {
 
   async findOne(id: number) {
     return this.prisma.product.findUnique({
-      where: { id },
+      where: { id, active: true },
       include: {
         productImage: {
           select: {
@@ -78,6 +80,9 @@ export class ProductService {
   }
 
   async remove(id: number) {
-    return this.prisma.product.delete({ where: { id } });
+    return this.prisma.product.update({
+      where: { id },
+      data: { active: false },
+    });
   }
 }
